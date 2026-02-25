@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Développeur Frontend</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f6f8;
+      --fg: #111827;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #0d9488;
+      --accent-light: rgba(13,148,136,.1);
+      --hero-bg: #0c1524;
+      --hero-fg: #e8ecf1;
+      --hero-muted: #8b95a5;
+      --hero-accent: #14b8a6;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); }
+    h1,h2,h3,h4 { font-family: 'Space Grotesk', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ---------- NAV ---------- */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem; transition: background .3s, box-shadow .3s;
+    }
+    .nav.scrolled { background: rgba(255,255,255,.9); backdrop-filter: blur(10px); box-shadow: 0 2px 20px rgba(0,0,0,.06); }
+    .nav-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.2rem; background: linear-gradient(135deg, var(--accent), #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: .875rem; font-weight: 500; color: var(--muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-toggle { display: none; background: none; border: none; cursor: pointer; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--fg); margin: 5px 0; transition: .3s; }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--hero-bg); position: relative; overflow: hidden; text-align: center; padding: 2rem;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(14,165,150,.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(56,189,248,.1) 0%, transparent 50%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 700px; }
+    .hero-label { color: var(--hero-accent); font-family: 'Space Grotesk'; font-size: .85rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 4rem); color: var(--hero-fg); line-height: 1.15; margin-bottom: 1.2rem; }
+    .hero h1 span { background: linear-gradient(135deg, var(--accent), #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--hero-muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { padding: .8rem 2rem; border-radius: var(--radius); background: var(--accent); color: #fff; font-weight: 600; font-size: .9rem; border: none; cursor: pointer; transition: opacity .2s; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-outline { padding: .8rem 2rem; border-radius: var(--radius); border: 1px solid rgba(139,149,165,.3); color: var(--hero-fg); font-weight: 600; font-size: .9rem; background: none; cursor: pointer; transition: border-color .2s, color .2s; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .scroll-arrow { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); color: var(--hero-muted); animation: bounce 2s infinite; font-size: 1.5rem; }
+    @keyframes bounce { 0%,100%{ transform: translateX(-50%) translateY(0); } 50%{ transform: translateX(-50%) translateY(10px); } }
+
+    /* ---------- SECTIONS ---------- */
+    .section { padding: 5rem 2rem; }
+    .section-alt { background: rgba(0,0,0,.02); }
+    .section-title { text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: .5rem; }
+    .section-title span { background: linear-gradient(135deg, var(--accent), #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .section-desc { text-align: center; color: var(--muted); max-width: 520px; margin: 0 auto 3.5rem; line-height: 1.7; }
+
+    /* ---------- ABOUT ---------- */
+    .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .about-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 2rem; text-align: center; transition: transform .3s;
+    }
+    .about-card:hover { transform: translateY(-4px); }
+    .about-icon { width: 56px; height: 56px; border-radius: 12px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 1.5rem; }
+    .about-card h3 { font-size: 1.1rem; margin-bottom: .5rem; }
+    .about-card p { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+
+    /* ---------- SKILLS ---------- */
+    .skills-list { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.8rem; }
+    .skill-item label { display: flex; justify-content: space-between; font-family: 'Space Grotesk'; font-weight: 600; margin-bottom: .5rem; font-size: .95rem; }
+    .skill-item label span { color: var(--muted); font-weight: 500; font-size: .85rem; }
+    .skill-bar { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .skill-fill { height: 100%; border-radius: 99px; width: 0; transition: width 1.2s ease; }
+
+    /* ---------- PROJECTS ---------- */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.8rem; max-width: 1000px; margin: 0 auto; }
+    .project-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; transition: transform .3s, box-shadow .3s;
+    }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
+    .project-card img { width: 100%; height: 200px; object-fit: cover; transition: transform .5s; }
+    .project-card:hover img { transform: scale(1.05); }
+    .project-card .card-body { padding: 1.5rem; }
+    .project-card h3 { font-size: 1.1rem; margin-bottom: .4rem; }
+    .project-card p { color: var(--muted); font-size: .85rem; line-height: 1.6; margin-bottom: 1rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .tag { font-size: .75rem; padding: .3rem .8rem; border-radius: 99px; background: var(--accent-light); color: var(--accent); font-weight: 500; }
+
+    /* ---------- CONTACT ---------- */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 3rem; max-width: 800px; margin: 0 auto; }
+    .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+    .contact-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .contact-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .contact-item h4 { font-size: .9rem; margin-bottom: .2rem; }
+    .contact-item p { color: var(--muted); font-size: .85rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .contact-form input, .contact-form textarea {
+      width: 100%; padding: .8rem 1rem; border-radius: var(--radius); border: 1px solid var(--border);
+      background: var(--card); font-family: 'Inter'; font-size: .9rem; color: var(--fg);
+      outline: none; transition: border-color .2s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent); }
+    .contact-form textarea { resize: none; min-height: 120px; }
+
+    /* ---------- FOOTER ---------- */
+    .footer {
+        background: var(--hero-bg); color: var(--hero-fg); padding: 2.5rem 2rem;
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-links { display: flex; gap: 1.2rem; }
+    .footer-links a { opacity: .6; transition: opacity .2s; font-size: 1.2rem; }
+    .footer-links a:hover { opacity: 1; }
+    .footer p { font-size: .85rem; opacity: .6; }
+
+    /* ---------- ANIMATIONS ---------- */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-mobile { display: flex; flex-direction: column; gap: .5rem; padding: 1rem 2rem; background: rgba(255,255,255,.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .nav-mobile a { padding: .5rem 0; font-size: .9rem; color: var(--muted); }
+    .contact-grid { grid-template-columns: 1fr; }
+    .contact-form .row { grid-template-columns: 1fr; }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <a href="#hero" class="nav-logo">&lt;Dev /&gt;</a>
+    <ul class="nav-links">
+      <li><a href="#hero">Accueil</a></li>
+      <li><a href="#about">À propos</a></li>
+      <li><a href="#skills">Compétences</a></li>
+      <li><a href="#projects">Projets</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-mobile" id="mobileMenu" style="display:none;"></div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <p class="hero-label">Développeur Frontend</p>
+      <h1>Mamadou Demba Gdio<br></h1>
+      <p></span>Passionné par le développement frontend, je conçois des interfaces élégantes, performantes et accessibles.</p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">Voir mes projets</a>
+        <a href="#contact" class="btn-outline">Me contacter</a>
+      </div>
+    </div>
+    <a href="#about" class="scroll-arrow">↓</a>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <h2 class="section-title">À propos de <span>moi</span></h2>
+    <p class="section-desc">Développeur frontend passionné, je transforme des maquettes en expériences web interactives et performantes. Mon objectif : allier esthétique et fonctionnalité.</p>
+    <div class="about-grid">
+      <div class="about-card reveal">
+        <div class="about-icon">💻</div>
+        <h3>Code propre</h3>
+        <p>J'écris un code lisible, maintenable et bien structuré.</p>
+      </div>
+      <div class="about-card reveal">
+        <div class="about-icon">🎨</div>
+        <h3>Design soigné</h3>
+        <p>Un sens du détail pour des interfaces élégantes et intuitives.</p>
+      </div>
+      <div class="about-card reveal">
+        <div class="about-icon">⚡</div>
+        <h3>Performance</h3>
+        <p>Des sites web rapides, optimisés et accessibles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section section-alt" id="skills">
+    <h2 class="section-title">Mes <span>compétences</span></h2>
+    <p class="section-desc">Les technologies que je maîtrise pour créer des interfaces web modernes.</p>
+    <div class="skills-list">
+      <div class="skill-item reveal">
+        <label>HTML <span>90%</span></label>
+        <div class="skill-bar"><div class="skill-fill" data-width="90" style="background:#e85d3a;"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <label>CSS <span>85%</span></label>
+        <div class="skill-bar"><div class="skill-fill" data-width="85" style="background:#3b82f6;"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <label>Git & GitHub <span>90%</span></label>
+        <div class="skill-bar"><div class="skill-fill" data-width="90" style="background:#0d9488;"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <label>JavaScript <span>80%</span></label>
+        <div class="skill-bar"><div class="skill-fill" data-width="80" style="background:#eab308;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section" id="projects">
+    <h2 class="section-title">Mes <span>projets</span></h2>
+    <p class="section-desc">Une sélection de projets qui illustrent mes compétences et ma créativité.</p>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop" alt="Dashboard Analytics" loading="lazy" /></div>
+        <div class="card-body">
+          <h3>Dashboard Analytics</h3>
+          <p>Tableau de bord interactif avec graphiques dynamiques et design responsive.</p>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop" alt="E-commerce UI" loading="lazy" /></div>
+        <div class="card-body">
+          <h3>E-commerce UI</h3>
+          <p>Interface e-commerce moderne avec filtres, panier et animations fluides.</p>
+          <div class="tags"><span class="tag">Tailwind CSS</span><span class="tag">JavaScript</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&h=400&fit=crop" alt="Portfolio Créatif" loading="lazy" /></div>
+        <div class="card-body">
+          <h3>Portfolio Créatif</h3>
+          <p>Site vitrine pour un photographe avec galerie plein écran et scroll animé.</p>
+          <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">Tailwind CSS</span></div>
+        </div>
+      </div>
+      <div class="project-card reveal">
+        <div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=600&h=400&fit=crop" alt="App Météo" loading="lazy" /></div>
+        <div class="card-body">
+          <h3>App Météo</h3>
+          <p>Application météo en temps réel avec géolocalisation et thèmes dynamiques.</p>
+          <div class="tags"><span class="tag">JavaScript</span><span class="tag">CSS</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section section-alt" id="contact">
+    <h2 class="section-title">Me <span>contacter</span></h2>
+    <p class="section-desc">Vous avez un projet en tête ? N'hésitez pas à me laisser un message.</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div><h4>Email</h4><p>gadiomamadou77@gmail.com</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div><h4>Localisation</h4><p>Dakar, Sénégal</p></div>
+        </div>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <div class="row">
+          <input type="text" placeholder="Nom" required />
+          <input type="email" placeholder="Email" required />
+        </div>
+        <input type="text" placeholder="Sujet" required />
+        <textarea placeholder="Votre message..." required></textarea>
+        <button type="submit" class="btn-primary">✈ Envoyer</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="nav-logo">&lt;Dev /&gt;</span>
+    <p>© 2025 — Tous droits réservés</p>
+    <div class="footer-links">
+      <a href="#" aria-label="GitHub">🔗</a>
+      <a href="#" aria-label="LinkedIn">💼</a>
+      <a href="#" aria-label="Twitter">🐦</a>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Mobile menu
+    const toggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const links = ['Accueil:#hero','À propos:#about','Compétences:#skills','Projets:#projects','Contact:#contact'];
+    mobileMenu.innerHTML = links.map(l => {
+      const [label, href] = l.split(':');
+      return `<a href="${href}">${label}</a>`;
+    }).join('');
+    toggle.addEventListener('click', () => {
+      const open = mobileMenu.style.display === 'none';
+      mobileMenu.style.display = open ? 'flex' : 'none';
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.style.display = 'none'));
+
+    // Reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Skill bars animation
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const fill = e.target.querySelector('.skill-fill');
+          if (fill) fill.style.width = fill.dataset.width + '%';
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.skill-item').forEach(el => skillObserver.observe(el));
+
+    // Contact form
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Message envoyé avec succès !');
+      this.reset();
+    });
+  </script>
+</body>
+</html>
